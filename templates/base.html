@@ -1,40 +1,44 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
         {% block title %}
-        
+
         {% endblock title %}
         Social network
     </title>
-
+    <!-- <link rel="stylesheet" href=" {% static 'bootstrap/css/bootstrap.css' %} "> -->
 </head>
+
 <body>
 
-    
+
     {% block content %}
-        
+
     {% endblock content %}
 
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function(e){
-            function getCookie(name, value = undefined){
-                if (value === undefined){
+        document.addEventListener('DOMContentLoaded', function (e) {
+            function getCookie(name, value = undefined) {
+                if (value === undefined) {
                     const cookies = document.cookie.split(";")
                     console.log("$$$$$$$$$$$$$$$$$")
                     console.log(cookies)
                     console.log("$$$$$$$$$$$$$$$$$")
 
-                    for(const item of cookies){
+                    for (const item of cookies) {
                         console.log(item)
                         const [key, value] = item.split("=")
                         console.log(key, value)
-                        if(key === name){
+                        if (key === name) {
                             return value
                         }
                     }
@@ -42,9 +46,10 @@
                 return null
             }
             {% block dom %}
-            
+
             {% endblock dom %}
         })
-        </script>
+    </script>
 </body>
+
 </html>
