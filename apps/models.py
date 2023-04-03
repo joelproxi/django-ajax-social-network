@@ -10,32 +10,30 @@ class CreationModificationMixin(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        asbtract = True
-        ordering = ('-created_at')
+        abstract = True
+        ordering = ('-created_at',)
         indexes = [
             models.Index(fields=['-created_at'])
         ]
 
 
 class Post(CreationModificationMixin):
-    content = models.CharField(max_length=500, blank=True, null=True)
-    slug = models.SlugField(max_length=500, unique=True)
+    content = models.TextField(null=True, blank=True)
+    # slug = models.SlugField(max_length=500, unique=True)
     # image = models.ImageField(upload_to='images/post')
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    users_like = models.ManyToManyField(User, related_name='user_like', through='LikePost')
+    users_like = models.ManyToManyField(User, related_name='user_like_post', through='LikePost')
     
     class Meta(CreationModificationMixin.Meta):
-        indexes = [
-            models.Index(fields=['slug'])
-        ]
+        pass
 
 
 class Media(models.Model):
     post = models.ForeignKey(Post, 
                              on_delete=models.CASCADE, 
                              related_name="post_media")
-    image = models.ImageField(upload_to='images/post')
+    image = models.ImageField(upload_to='images/post/')
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
@@ -48,10 +46,13 @@ class Comment(CreationModificationMixin):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posted')
     # created_at = models.DateTimeField(auto_now_add=True)
     # updated_at = models.DateTimeField(auto_now=True)
-    users_like = models.ManyToManyField(User, related_name='user_like', through='LikeComment')
+    users_like = models.ManyToManyField(User, related_name='user_like_comment', through='LikeComment')
     
     class Meta(CreationModificationMixin.Meta):
         pass
+    
+    def __str__(self) -> str:
+        return self.content
         
 
 class LikePost(models.Model):
@@ -61,8 +62,7 @@ class LikePost(models.Model):
     
     class Meta:
         pass
-    
-    
+
 
 class LikeComment(models.Model):
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='comment_like')

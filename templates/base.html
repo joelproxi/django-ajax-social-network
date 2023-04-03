@@ -16,6 +16,33 @@
     {% block content %}
         
     {% endblock content %}
-        
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function(e){
+            function getCookie(name, value = undefined){
+                if (value === undefined){
+                    const cookies = document.cookie.split(";")
+                    console.log("$$$$$$$$$$$$$$$$$")
+                    console.log(cookies)
+                    console.log("$$$$$$$$$$$$$$$$$")
+
+                    for(const item of cookies){
+                        console.log(item)
+                        const [key, value] = item.split("=")
+                        console.log(key, value)
+                        if(key === name){
+                            return value
+                        }
+                    }
+                }
+                return null
+            }
+            {% block dom %}
+            
+            {% endblock dom %}
+        })
+        </script>
 </body>
 </html>

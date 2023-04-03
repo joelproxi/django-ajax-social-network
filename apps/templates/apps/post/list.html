@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+
+
+{% block title %}
+    post list
+{% endblock title %}
+
+
+
+{% block content %}
+    
+    {% if messages %}
+        {% for message in messages %}
+          <li> {{ message }}  </li>
+        {% endfor %}
+
+    {% endif %}
+      
+    <h1>Post list</h1>
+    <a href="{% url 'create_post' %} ">Add post</a>
+    <br>
+    <br>
+    <div>
+        {% for post in posts %}
+          
+          {% with total_post_like=post.users_like.count  total_post_user=post.users_like.all %}
+            
+      
+            
+            <div>
+              <P> {{ post.content}} </P>
+              {% if post.post_media.all %}
+                {% for image in post.post_media.all  %}
+                    {% if image.image %}
+                      <img src="{{ image.image.url }} " alt="" height="350" width="400" >
+                {% endif %}
+              {% endfor %}
+              
+              {% endif %}
+              <p>{{ post.owner }} </p>
+              <p>
+                <span class="total-post-like">{{ total_post_like }}</span>
+                <button 
+                    class="total-post-button"
+                    data-action="{% if request.user in total_post_user %}un{% endif %}like" 
+                    data-item_id="{{ post.id }}"> 
+                  {% if request.user not in total_post_user %}
+                    Like
+                  {% else %}
+                    UnLike
+                  {% endif %}
+                </button>
+              </p>
+              <p><a href="{% url 'update_post' post.id %} ">Update post</a></p>
+              <p><a href="{% url 'add_comment' post.id %} ">Add comment</a></p>
+              {% if post.post_comment.all %}
+                {% for comment in post.post_comment.all  %}
+                  <li>{{ comment }}  <span> <a href="{% url 'update_comment' post.id comment.id %}"> Edit </a> </span> </li>
+                {% endfor %}
+              
+              {% endif %}
+            </div>
+            {% if not forloop.last %}
+            <hr>
+            {% endif %}
+          {% endwith %}
+        {% endfor %}
+    </div>
+{% endblock content %}
+    
+
+<script>
+  const url = '{% url "like_item" %}';
+  let options = {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': cookie
+    },
+    mode: 'same-origin'
+  }
+
+  document.querySelectorAll(".total-post-button").forEach(button => {
+    button.addEventListener('click', function(e){
+      let formData = new FormData()
+      formData.append('item_id', button.dataset.item_id)
+      formData.append('action', button.dataset.action)
+      options['body'] = formData
+
+      fetch(url, options)
+        .then(res => res.json())
+        .then(data => {
+          if( data['status'] === 'success'){
+            let previous =  button.dataset.action;
+            let action = previous === 'like' ? 'unlike' : 'like';
+            button.dataset.action = action
+            button.innerHTML = action;
+
+            let span = button.parentNode.firstElementChild
+            let totalCount = parseInt(span.innerHTML)
+            span = previous === 'like' ? totalCount + 1 : totalCount - 1
+          }
+        })
+    })
+  })
+
+</script>
+
+{% block dom %}
+  const cookie = getCookie('csrftoken')
+  console.log(cookie)
+  const url = '{% url "like_item" %}';
+  let options = {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': cookie
+    },
+    mode: 'same-origin'
+  }
+
+  document.querySelectorAll(".total-post-button").forEach(button => {
+    button.addEventListener('click', function(e){
+      let formData = new FormData()
+      formData.append('item_id', button.dataset.item_id)
+      formData.append('action', button.dataset.action)
+      options['body'] = formData
+
+      fetch(url, options)
+        .then(res => res.json())
+        .then(data => {
+          if( data['status'] === 'success'){
+            let previous =  button.dataset.action;
+            let action = previous === 'like' ? 'unlike' : 'like';
+            button.dataset.action = action
+            button.innerHTML = action;
+
+            let span = button.parentNode.firstElementChild
+            let totalCount = parseInt(span.innerHTML)
+            console.log(totalCount)
+            span.innerHTML = previous === 'like' ? totalCount + 1 : totalCount - 1
+          }
+        })
+    })
+  })
+{% endblock dom %}
+

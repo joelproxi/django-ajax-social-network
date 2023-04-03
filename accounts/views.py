@@ -3,15 +3,20 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 
 from accounts.forms import UserRegistration
+from apps.models import Post
+
+
 # Create your views here.
 
 @login_required
 def profile(request: HttpRequest) -> HttpResponse:
-    template_name = 'accounts/profile.html'
+    template_name: str = 'accounts/profile.html'
+    post_list = Post.objects.all()
     context = {
         'session': 'profile',
+        'post_list': post_list,
     }
-    return render(request, template_name, context )
+    return render(request, template_name, context)
 
 
 def register_user(request):

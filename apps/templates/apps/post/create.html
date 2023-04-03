@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+
+
+{% block title %}
+    Add post
+{% endblock title %}
+
+
+
+{% block content %}
+    
+    {% if messages %}
+        {% for message in messages %}
+          <li> {{ message }}  </li>
+        {% endfor %}
+
+    {% endif %}
+        
+    <h1>Add Post </h1>
+    <br>
+    <div>
+        <form action="." method="post" enctype="multipart/form-data">
+            {{ form_text.as_p }}
+            {{ form_media.as_p }}
+            {% csrf_token %}
+            <input type="submit" value="Add post">
+        </form>
+    </div>
+{% endblock content %}
+    
+    
