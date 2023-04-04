@@ -39,20 +39,9 @@
               
               {% endif %}
               <p>{{ post.owner }} </p>
-              <p>
-                <span class="total-post-like">{{ total_post_like }}</span>
-                <button 
-                    class="total-post-button"
-                    data-action="{% if request.user in total_post_user %}un{% endif %}like" 
-                    data-item_id="{{ post.id }}"
-                    data-model="post"> 
-                  {% if request.user not in total_post_user %}
-                    Like{{ total_com_like|pluralize }}
-                  {% else %}
-                    UnLike
-                  {% endif %}
-                </button>
-              </p>
+              
+              {% include 'apps/partial/like_item.html'  with total_like=total_post_like total_user=total_post_user model='post' item=post %}
+
               <p><a href="{% url 'update_post' post.id %} ">Update post</a></p>
               <p><a href="{% url 'add_comment' post.id %} ">Add comment</a></p>
               {% if post.post_comment.all %}
@@ -65,20 +54,8 @@
                       <span> 
                         <a href="{% url 'update_comment' post.id comment.id %}"> Edit </a> 
                       </span> 
-                      <p>
-                        <span class="total-post-like">{{ total_com_like }}</span>
-                        <button 
-                            class="total-post-button"
-                            data-action="{% if request.user in total_com_user %}un{% endif %}like" 
-                            data-item_id="{{ comment.id }}"
-                            data-model="comment"> 
-                          {% if request.user not in total_com_user %}
-                            Like{{ total_com_like|pluralize }}
-                          {% else %}
-                            UnLike
-                          {% endif %}
-                        </button>
-                      </p>
+                      {% include 'apps/partial/like_item.html'  with total_like=total_com_like total_user=total_com_user model='comment' item=comment %}
+
                     </li>
                   {% endwith %}
                 {% endfor %}

@@ -1,0 +1,14 @@
+<p>
+    <span class="total-post-like">{{ total_like }}</span>
+    <button 
+        class="total-post-button"
+        data-action="{% if request.user in total_user %}un{% endif %}like" 
+        data-item_id="{{ item.id }}"
+        data-model="{{ model }}"> 
+      {% if request.user not in total_user %}
+        Like
+      {% else %}
+        UnLike
+      {% endif %}
+    </button>
+</p>
