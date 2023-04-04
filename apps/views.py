@@ -4,6 +4,7 @@ from django.shortcuts import  get_object_or_404, render, redirect
 from django.contrib import messages
 from django.forms import modelformset_factory
 from django.views.decorators.http import require_POST
+from django.apps import apps
 
 from apps.forms import CommentForm, PostForm, MediaForm
 from .models import Comment, Media, Post
@@ -168,15 +169,17 @@ def update_comment(request: HttpRequest, post_id: int, id: int) ->  HttpResponse
 def like_item(request):
     action = request.POST.get("action")
     item_id = request.POST.get('item_id')
-    
+    model = request.POST.get('model')
+    item = apps.get_model('apps', model)
+    print(item)
     if action and item_id:
         try:
-            post = Post.objects.get(id=item_id)
+            obj = item.objects.get(id=item_id)
             if action == 'like':
-                post.users_like.add(request.user)
+                obj.users_like.add(request.user)
             else:
-                post.users_like.remove(request.user)
+                obj.users_like.remove(request.user)
             return JsonResponse({'status': 'success'})
-        except Post.DoesNotExist:
+        except item.DoesNotExist:
             pass
     return JsonResponse({'status': 'error'})

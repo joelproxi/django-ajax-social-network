@@ -44,9 +44,10 @@
                 <button 
                     class="total-post-button"
                     data-action="{% if request.user in total_post_user %}un{% endif %}like" 
-                    data-item_id="{{ post.id }}"> 
+                    data-item_id="{{ post.id }}"
+                    data-model="post"> 
                   {% if request.user not in total_post_user %}
-                    Like
+                    Like{{ total_com_like|pluralize }}
                   {% else %}
                     UnLike
                   {% endif %}
@@ -56,7 +57,30 @@
               <p><a href="{% url 'add_comment' post.id %} ">Add comment</a></p>
               {% if post.post_comment.all %}
                 {% for comment in post.post_comment.all  %}
-                  <li>{{ comment }}  <span> <a href="{% url 'update_comment' post.id comment.id %}"> Edit </a> </span> </li>
+                  
+                  {% with total_com_like=comment.users_like.count  total_com_user=comment.users_like.all  %}
+             
+                    <li>
+                      {{ comment }}  
+                      <span> 
+                        <a href="{% url 'update_comment' post.id comment.id %}"> Edit </a> 
+                      </span> 
+                      <p>
+                        <span class="total-post-like">{{ total_com_like }}</span>
+                        <button 
+                            class="total-post-button"
+                            data-action="{% if request.user in total_com_user %}un{% endif %}like" 
+                            data-item_id="{{ comment.id }}"
+                            data-model="comment"> 
+                          {% if request.user not in total_com_user %}
+                            Like{{ total_com_like|pluralize }}
+                          {% else %}
+                            UnLike
+                          {% endif %}
+                        </button>
+                      </p>
+                    </li>
+                  {% endwith %}
                 {% endfor %}
               
               {% endif %}
@@ -85,6 +109,7 @@
       let formData = new FormData()
       formData.append('item_id', button.dataset.item_id)
       formData.append('action', button.dataset.action)
+      formData.append('model',button.dataset.model )
       options['body'] = formData
 
       fetch(url, options)
@@ -98,7 +123,7 @@
 
             let span = button.parentNode.firstElementChild
             let totalCount = parseInt(span.innerHTML)
-            span = previous === 'like' ? totalCount + 1 : totalCount - 1
+            span.innerHTML = previous === 'like' ? totalCount + 1 : totalCount - 1
           }
         })
     })
@@ -120,9 +145,12 @@
 
   document.querySelectorAll(".total-post-button").forEach(button => {
     button.addEventListener('click', function(e){
+      console.log(button)
       let formData = new FormData()
       formData.append('item_id', button.dataset.item_id)
       formData.append('action', button.dataset.action)
+      formData.append('model', button.dataset.model )
+
       options['body'] = formData
 
       fetch(url, options)
@@ -133,7 +161,7 @@
             let action = previous === 'like' ? 'unlike' : 'like';
             button.dataset.action = action
             button.innerHTML = action;
-
+            
             let span = button.parentNode.firstElementChild
             let totalCount = parseInt(span.innerHTML)
             console.log(totalCount)
