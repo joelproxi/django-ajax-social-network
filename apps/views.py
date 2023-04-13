@@ -12,6 +12,7 @@ from .models import Comment, Media, Post
 
 # Create your views here.
 
+<<<<<<< HEAD
 
 @login_required
 def create_post(request: HttpRequest) -> HttpResponse:
@@ -183,3 +184,5 @@ def like_item(request):
         except item.DoesNotExist:
             pass
     return JsonResponse({'status': 'error'})
+=======
+>>>>>>> b9953a5 (remove venv and __pycahe__)
