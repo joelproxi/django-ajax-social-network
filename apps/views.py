@@ -1,10 +1,12 @@
+
+from django.apps import apps
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import PageNotAnInteger, Paginator, EmptyPage
+from django.forms import modelformset_factory
 from django.http import HttpResponse, HttpRequest, JsonResponse
 from django.shortcuts import  get_object_or_404, render, redirect
-from django.contrib import messages
-from django.forms import modelformset_factory
 from django.views.decorators.http import require_POST
-from django.apps import apps
 
 from apps.forms import CommentForm, PostForm, MediaForm
 from .models import Comment, Media, Post
@@ -104,10 +106,25 @@ def update_post(request: HttpRequest, post_id: int) -> HttpResponse:
 @login_required
 def post_list(request: HttpRequest) -> HttpResponse:
     template_name: str = 'apps/post/list.html'
+    template_ajax: str = 'apps/post/ajax_list.html'
     context: dict[str, any] = {}
     posts = Post.objects.select_related('owner')\
         .prefetch_related('users_like').all()
+    paginator = Paginator(posts, 2)
+    page = request.GET.get('page')
+    page_only = request.GET.get('page_only')
+    
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        if page_only:
+            return HttpResponse("")
+        posts = paginator.page(paginator.num_pages)
     context['posts'] = posts
+    if page_only:
+        return render(request, template_ajax, context)
     return render(request, template_name, context)
 
 
