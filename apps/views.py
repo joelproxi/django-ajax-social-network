@@ -200,3 +200,23 @@ def like_item(request):
         except item.DoesNotExist:
             pass
     return JsonResponse({'status': 'error'})
+
+
+@login_required
+@require_POST
+def add_ajax_comment(request):
+    post_id = request.POST.get("id")
+    content = request.POST.get('conetnt')
+    template_name = 'apps/partial/comment_list.html'
+    if post_id and content:
+        try:
+            post = Post.objects.get(id=post_id)
+            comment = Comment.objects.create(
+                post=post, 
+                content=content,
+                owner=request.user)
+            return render(request, template_name, {'comment': comment})
+        except Post.DoesNotExist:
+            return HttpResponse('error')
+    return HttpResponse('error')
+

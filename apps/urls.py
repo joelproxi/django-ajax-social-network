@@ -11,6 +11,7 @@ urlpatterns = [
 	path('', views.post_list, name='post_list'),
  
 	path('ajax/', views.like_item, name='like_item'),
+	path('ajax-add-comment/', views.add_ajax_comment, name='add_ajax_comment'),
  
 	
 ]
