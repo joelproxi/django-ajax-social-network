@@ -206,7 +206,7 @@ def like_item(request):
 @require_POST
 def add_ajax_comment(request):
     post_id = request.POST.get("id")
-    content = request.POST.get('conetnt')
+    content = request.POST.get('content')
     template_name = 'apps/partial/comment_list.html'
     if post_id and content:
         try:

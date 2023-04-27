@@ -41,21 +41,7 @@
                 {% with total_com_like=comment.users_like.count total_com_user=comment.users_like.all %}
 
                 <div class="social-comment">
-                    <a href="" class="pull-left">
-                        <img alt="image" src="https://bootdey.com/img/Content/avatar/avatar2.png">
-                    </a>
-                    <div class="media-body">
-                        <a href="#">
-                            {{ comment.owner }}
-                        </a>
-                        {{ comment.content }}
-                        <br>
-                        <!-- <a href="#" class="small"><i class="fa fa-thumbs-up"></i> {{ total_com_like }} Like this!</a> -
-                        <small class="text-muted">12.06.2014</small> -->
-                        {% include 'apps/partial/like_item.html' with total_like=total_com_like total_user=total_com_user model='comment' item=comment tag="a" tag_class="small" %} -
-                        <small class="text-muted">{{ comment.created_at }}</small>
-
-                    </div>
+                    {% include 'apps/partial/comment_list.html' %}
                 </div>
 
                 {% endwith %}
@@ -63,7 +49,15 @@
 
                 <div class="social-comment">
                     <div class="media-body">
-                        <textarea class="form-control" placeholder="Write comment..."></textarea>
+                        <textarea 
+                            class="form-control" 
+                            placeholder="Write comment..."
+                            data-id="{{ post.id }}"
+                            ></textarea>
+                    </div>
+                    <div class="media-body">
+                        <button class="btn btn-primary btn-sm send-comment">Send</button>
+                        <button class="btn btn-danger btn-sm">Clear</button>
                     </div>
                 </div>
 

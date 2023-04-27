@@ -106,6 +106,45 @@ post list
     })
   }
 
+  function addCommentWithAjax(){
+    const url = '{% url "add_ajax_comment" %}';
+    let options = {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': cookie
+      },
+      mode: 'same-origin'
+    }
+
+    document.querySelectorAll('.send-comment').forEach(sendButton => {
+      sendButton.addEventListener('click', function(e) {
+        let socialComment = sendButton.parentNode.parentNode;
+        let textarea = socialComment.querySelector('textarea')
+        let content = textarea.value
+        let post_id = textarea.dataset.id
+        console.log(content, post_id)
+
+        let formData = new FormData();
+        formData.append('content', content)       
+        formData.append('id', post_id)
+        options['body'] = formData
+
+        fetch(url, options)
+          .then(resp => resp.text())
+          .then(data => {
+            if (data === 'error'){
+              console.log('error')
+            }
+            else{
+              console.log(data)
+              socialComment.parentNode.firstElementChild.insertAdjacentHTML('afterbegin', data)
+              textarea.value = ''
+            }
+          })
+      })
+    })
+  }
+
   paginateWithAjax()
 
 </script>
@@ -186,5 +225,48 @@ const url = '{% url "like_item" %}';
     })
   }
 
+ function addCommentWithAjax(){
+    const url = '{% url "add_ajax_comment" %}';
+    let options = {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': cookie
+      },
+      mode: 'same-origin'
+    }
+
+    document.querySelectorAll('.send-comment').forEach(sendButton => {
+      sendButton.addEventListener('click', function(e) {
+        let socialComment = sendButton.parentNode.parentNode;
+        let textarea = socialComment.querySelector('textarea')
+        let content = textarea.value
+        let post_id = textarea.dataset.id
+        console.log(content, post_id)
+
+        let formData = new FormData();
+        formData.append('content', content)       
+        formData.append('id', post_id)
+        options['body'] = formData
+
+        fetch(url, options)
+          .then(resp => resp.text())
+          .then(data => {
+            if (data === 'error'){
+              console.log('error')
+            }
+            else{
+              console.log(data)
+              socialComment.parentNode.firstElementChild.insertAdjacentHTML('afterbegin', data)
+              textarea.value = ''
+            }
+          })
+      })
+    })
+  }
+
+  
+
+
+  addCommentWithAjax()
   paginateWithAjax()
 {% endblock dom %}
