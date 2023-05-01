@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 # Create your models here.
 User = get_user_model()
 
@@ -84,3 +85,27 @@ class Follow(models.Model):
 
 User.add_to_class('follow_user',
                   models.ManyToManyField('self', related_name='followed', symmetrical=False))
+
+
+class Notifaication(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, 
+                             related_name='notified')
+    action = models.CharField(max_length=255)
+    read = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    content_type = models.ForeignKey(ContentType, 
+                                     on_delete=models.CASCADE, 
+                                     related_name='obj',
+                                     null=True, 
+                                     blank=True)
+    object_id = models.IntegerField(null=True, blank=True)
+    target = GenericForeignKey('content_type', 'object_id')
+    
+    class Meta:
+        ordering = ['-created']
+        indexes = [
+            models.Index(fields=['-created']),
+            models.Index(fields=['content_type', 'object_id']),
+        ]
+    
