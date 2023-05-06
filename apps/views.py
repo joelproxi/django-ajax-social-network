@@ -9,7 +9,7 @@ from django.shortcuts import  get_object_or_404, render, redirect
 from django.views.decorators.http import require_POST
 
 from apps.forms import CommentForm, PostForm, MediaForm
-from .models import Comment, Media, Post
+from .models import Comment, Media, Notification, Post
 
 
 # Create your views here.
@@ -114,6 +114,8 @@ def post_list(request: HttpRequest) -> HttpResponse:
     page = request.GET.get('page')
     page_only = request.GET.get('page_only')
     
+    notifications = Notification.objects\
+        .select_related('user', 'content_type').all()
     try:
         posts = paginator.page(page)
     except PageNotAnInteger:
@@ -123,6 +125,7 @@ def post_list(request: HttpRequest) -> HttpResponse:
             return HttpResponse("")
         posts = paginator.page(paginator.num_pages)
     context['posts'] = posts
+    context['notifications'] = notifications
     if page_only:
         return render(request, template_ajax, context)
     return render(request, template_name, context)
@@ -194,8 +197,10 @@ def like_item(request):
             obj = item.objects.get(id=item_id)
             if action == 'like':
                 obj.users_like.add(request.user)
+                add_notification(request.user, action, obj)
             else:
                 obj.users_like.remove(request.user)
+                add_notification(request.user, action, obj)
             return JsonResponse({'status': 'success'})
         except item.DoesNotExist:
             pass
@@ -215,8 +220,14 @@ def add_ajax_comment(request):
                 post=post, 
                 content=content,
                 owner=request.user)
+            add_notification(request.user, 'comment', post )
             return render(request, template_name, {'comment': comment})
         except Post.DoesNotExist:
             return HttpResponse('error')
     return HttpResponse('error')
 
+
+def add_notification(user , action, target):
+    notif = Notification(user=user, action=action, target=target)
+    notif.save()
+    

@@ -28,6 +28,9 @@ class Post(CreationModificationMixin):
     
     class Meta(CreationModificationMixin.Meta):
         pass
+    
+    def __str__(self) -> str:
+        return f"{self.content}"
 
 
 class Media(models.Model):
@@ -87,8 +90,9 @@ User.add_to_class('follow_user',
                   models.ManyToManyField('self', related_name='followed', symmetrical=False))
 
 
-class Notifaication(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, 
+class Notification(models.Model):
+    user = models.ForeignKey(User, 
+                             on_delete=models.CASCADE, 
                              related_name='notified')
     action = models.CharField(max_length=255)
     read = models.BooleanField(default=False)
@@ -106,6 +110,10 @@ class Notifaication(models.Model):
         ordering = ['-created']
         indexes = [
             models.Index(fields=['-created']),
+            models.Index(fields=['read']),
             models.Index(fields=['content_type', 'object_id']),
         ]
+        
+    def __str__(self) -> str:
+        return "%s -  %s -  %s -  %s" % (self.user, self.action, self.target.content, self.created)
     
