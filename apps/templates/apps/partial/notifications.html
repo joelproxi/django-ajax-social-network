@@ -1,0 +1,14 @@
+{% for notification in notifications %}
+<div
+    class="noty_bar noty_type__success noty_theme__unify--v1--light noty_close_with_click noty_close_with_button g-mb-25 mb-1">
+    <div class="noty_body">
+        <div class="g-mr-20">
+            <div class="noty_body__icon">
+                <i class="hs-admin-check"></i>
+            </div>
+        </div>
+        <div> {{ notification.user|capfirst }}  a {{ notification.action }} à {{ notification.created|date }}</div>
+    </div>
+    <div class="noty_close_button">×</div>
+</div>
+{% endfor %}

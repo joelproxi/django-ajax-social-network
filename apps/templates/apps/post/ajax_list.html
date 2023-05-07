@@ -1,7 +1,7 @@
 {% for post in posts %}
 {% with total_post_like=post.users_like.count total_post_user=post.users_like.all %}
 
-<div class="col-md-7">
+
     <div class="social-feed-separated">
         <div class="social-avatar">
             <a href="">
@@ -64,7 +64,7 @@
             </div>
         </div>
     </div>
-</div>
+
 
 {% endwith %}
 {% endfor %}

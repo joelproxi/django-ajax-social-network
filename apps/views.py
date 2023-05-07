@@ -126,6 +126,7 @@ def post_list(request: HttpRequest) -> HttpResponse:
         posts = paginator.page(paginator.num_pages)
     context['posts'] = posts
     context['notifications'] = notifications
+
     if page_only:
         return render(request, template_ajax, context)
     return render(request, template_name, context)

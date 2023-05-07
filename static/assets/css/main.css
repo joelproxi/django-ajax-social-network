@@ -1,8 +1,3 @@
-body {
-    margin-top: 20px;
-    background: #fbfdff;
-}
-
 [class*="noty_theme__unify--v1"] {
     box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.15);
     border-radius: 4px;
@@ -136,4 +131,9 @@ body {
 
 .noty_theme__unify--v1--light .noty_close_button {
     color: #cad6d6;
+  
+}
+
+.noty_close_button{
+    cursor: pointer;
 }
