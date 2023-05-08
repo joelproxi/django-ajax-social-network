@@ -40,40 +40,64 @@ post list
 {% endblock style %}
 
 <script>
-  const url = '{% url "like_item" %}';
-  let options = {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': cookie
-    },
-    mode: 'same-origin'
+  const notifSocket = new WebSocket(
+    'ws://'
+    + window.location.host
+    + '/ws/notif/feed/'
+  );
+
+  notifSocket.onopen = function(){
+    console.log("Connection is open")
   }
 
-  document.querySelectorAll(".total-post-button").forEach(button => {
-    button.addEventListener('click', function (e) {
-      let formData = new FormData()
-      formData.append('item_id', button.dataset.item_id)
-      formData.append('action', button.dataset.action)
-      formData.append('model', button.dataset.model)
-      options['body'] = formData
+  notifSocket.onmessage = function(e){
+    const data = JSON.parse(e.data)
+    console.log(data)
+  }
 
-      fetch(url, options)
-        .then(res => res.json())
-        .then(data => {
-          if (data['status'] === 'success') {
-            let previous = button.dataset.action;
-            let action = previous === 'like' ? 'unlike' : 'like';
-            button.dataset.action = action
-            button.classList.toggle('text-primary')
-            
+  notifSocket.onclose = function(e){
+    console.error(e)
 
-            let span = button.querySelector('span')
-            let totalCount = parseInt(span.innerHTML)
-            span.innerHTML = previous === 'like' ? totalCount + 1 : totalCount - 1
-          }
+  }
+
+  function likeItemAjax() {
+      const url = '{% url "like_item" %}';
+      let options = {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': cookie
+        },
+        mode: 'same-origin'
+      }
+
+      document.querySelectorAll(".total-post-button").forEach(button => {
+        button.addEventListener('click', function (e) {
+          let formData = new FormData()
+          formData.append('item_id', button.dataset.item_id)
+          formData.append('action', button.dataset.action)
+          formData.append('model', button.dataset.model)
+          options['body'] = formData
+
+          fetch(url, options)
+            .then(res => res.json())
+            .then(data => {
+              if (data['status'] === 'success') {
+                let previous = button.dataset.action;
+                let action = previous === 'like' ? 'unlike' : 'like';
+                button.dataset.action = action
+                button.classList.toggle('text-primary')
+
+
+                let span = button.querySelector('span')
+                let totalCount = parseInt(span.innerHTML)
+                span.innerHTML = previous === 'like' ? totalCount + 1 : totalCount - 1
+                notifSocket.send(JSON.stringify({type: "notification_feed"}))
+              }
+            })
         })
-    })
-  })
+      })
+
+    }
 
   function paginateWithAjax(){
     let page = 1;
@@ -153,46 +177,74 @@ post list
   }
 
   paginateWithAjax()
+  likeItemAjax()
+  addCommentWithAjax()
 
 </script>
 
 {% block dom %}
-const cookie = getCookie('csrftoken')
-console.log(cookie)
-const url = '{% url "like_item" %}';
-  let options = {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': cookie
-    },
-    mode: 'same-origin'
+  const cookie = getCookie('csrftoken')
+  console.log(cookie)
+   const notifSocket = new WebSocket(
+    'ws://'
+    + window.location.host
+    + '/ws/notif/feed/'
+  );
+
+  notifSocket.onopen = function(){
+    console.log("Connection is open")
   }
 
-  document.querySelectorAll(".total-post-button").forEach(button => {
-    button.addEventListener('click', function (e) {
-      let formData = new FormData()
-      formData.append('item_id', button.dataset.item_id)
-      formData.append('action', button.dataset.action)
-      formData.append('model', button.dataset.model)
-      options['body'] = formData
+  notifSocket.onmessage = function(e){
+    const data = JSON.parse(e.data)
+    console.log(data)
+  }
 
-      fetch(url, options)
-        .then(res => res.json())
-        .then(data => {
-          if (data['status'] === 'success') {
-            let previous = button.dataset.action;
-            let action = previous === 'like' ? 'unlike' : 'like';
-            button.dataset.action = action
-            button.classList.toggle('text-primary')
-            
+  notifSocket.onclose = function(e){
+    console.error(e)
 
-            let span = button.querySelector('span')
-            let totalCount = parseInt(span.innerHTML)
-            span.innerHTML = previous === 'like' ? totalCount + 1 : totalCount - 1
-          }
-        })
+  }
+
+  function likeItemAjax(){
+    const url = '{% url "like_item" %}';
+    let options = {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': cookie
+      },
+      mode: 'same-origin'
+    }
+
+    document.querySelectorAll(".total-post-button").forEach(button => {
+      button.addEventListener('click', function (e) {
+        let formData = new FormData()
+        formData.append('item_id', button.dataset.item_id)
+        formData.append('action', button.dataset.action)
+        formData.append('model', button.dataset.model)
+        options['body'] = formData
+
+        fetch(url, options)
+          .then(res => res.json())
+          .then(data => {
+            if (data['status'] === 'success') {
+              let previous = button.dataset.action;
+              let action = previous === 'like' ? 'unlike' : 'like';
+              button.dataset.action = action
+              button.classList.toggle('text-primary')
+              
+
+              let span = button.querySelector('span')
+              let totalCount = parseInt(span.innerHTML)
+              span.innerHTML = previous === 'like' ? totalCount + 1 : totalCount - 1
+              notifSocket.send(JSON.stringify({type: "notification_feed"}))
+
+            }
+          })
+      })
     })
-  })
+
+  }
+
 
   function paginateWithAjax(){
     let page = 1;
@@ -265,6 +317,8 @@ const url = '{% url "like_item" %}';
               console.log(data)
               socialComment.parentNode.firstElementChild.insertAdjacentHTML('afterbegin', data)
               textarea.value = ''
+              notifSocket.send(JSON.stringify({type: "notification_feed"}))
+
             }
           })
       })
@@ -276,4 +330,5 @@ const url = '{% url "like_item" %}';
 
   addCommentWithAjax()
   paginateWithAjax()
+  likeItemAjax()
 {% endblock dom %}
