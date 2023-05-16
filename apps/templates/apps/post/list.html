@@ -27,7 +27,7 @@ post list
     <div class="col-md-7" id="post-ajax">
       {% include "apps/post/ajax_list.html" %}
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4" id="notif-feed">
       {% include 'apps/partial/notifications.html' %}
     </div>
   </div>
@@ -52,11 +52,53 @@ post list
 
   notifSocket.onmessage = function(e){
     const data = JSON.parse(e.data)
-    console.log(data)
+    switch(data.name){
+      case "greeting": 
+        console.log(data.message)
+        break;
+      
+      case "notif_feed": 
+        console.log(data.message)
+        buildDomContent(data.message)
+        break;
+        
+      default:
+        throw new Error("Unknown message type")
+        break;
+    }
   }
 
   notifSocket.onclose = function(e){
     console.error(e)
+
+  }
+
+  function buildDomContent(data) {
+
+    const json_data = JSON.parse(data);
+
+    let content;
+
+    for( notification of json_data){
+
+      content += `
+        <div
+          class="noty_bar noty_type__success noty_theme__unify--v1--light noty_close_with_click noty_close_with_button g-mb-25 mb-1">
+          <div class="noty_body">
+              <div class="g-mr-20">
+                  <div class="noty_body__icon">
+                      <i class="hs-admin-check"></i>
+                  </div>
+              </div>
+              <div> ${ notification.user.username }  a ${ notification.action } à ${ notification.created } </div>
+          </div>
+          <div class="noty_close_button">×</div>
+        </div>
+      
+      `
+    }
+
+    document.querySelector("#notif-feed").innerHTML = content;
 
   }
 
@@ -91,7 +133,7 @@ post list
                 let span = button.querySelector('span')
                 let totalCount = parseInt(span.innerHTML)
                 span.innerHTML = previous === 'like' ? totalCount + 1 : totalCount - 1
-                notifSocket.send(JSON.stringify({type: "notification_feed"}))
+                notifSocket.send(JSON.stringify({type: "notif_feed"}))
               }
             })
         })
@@ -198,10 +240,54 @@ post list
   notifSocket.onmessage = function(e){
     const data = JSON.parse(e.data)
     console.log(data)
+    switch(data.name){
+      case "greeting": 
+        console.log(data.message)
+        break;
+      
+      case "notif_feed": 
+        console.log(data.message)
+        buildDomContent(data.message)
+        break;
+        
+      default:
+        throw new Error("Unknown message type")
+        break;
+    }
   }
 
   notifSocket.onclose = function(e){
     console.error(e)
+
+  }
+
+
+    function buildDomContent(data) {
+
+    const json_data = JSON.parse(data);
+
+    let content;
+
+    for( notification of json_data){
+
+      content += `
+        <div
+          class="noty_bar noty_type__success noty_theme__unify--v1--light noty_close_with_click noty_close_with_button g-mb-25 mb-1">
+          <div class="noty_body">
+              <div class="g-mr-20">
+                  <div class="noty_body__icon">
+                      <i class="hs-admin-check"></i>
+                  </div>
+              </div>
+              <div> ${ notification.user.username }  a ${ notification.action } a ${ notification.target }  à ${ notification.created } </div>
+          </div>
+          <div class="noty_close_button">×</div>
+        </div>
+      
+      `
+    }
+
+    document.querySelector("#notif-feed").innerHTML = content;
 
   }
 
@@ -236,7 +322,7 @@ post list
               let span = button.querySelector('span')
               let totalCount = parseInt(span.innerHTML)
               span.innerHTML = previous === 'like' ? totalCount + 1 : totalCount - 1
-              notifSocket.send(JSON.stringify({type: "notification_feed"}))
+              notifSocket.send(JSON.stringify({type: "notif_feed"}))
 
             }
           })
@@ -317,7 +403,7 @@ post list
               console.log(data)
               socialComment.parentNode.firstElementChild.insertAdjacentHTML('afterbegin', data)
               textarea.value = ''
-              notifSocket.send(JSON.stringify({type: "notification_feed"}))
+              notifSocket.send(JSON.stringify({type: "notif_feed"}))
 
             }
           })
