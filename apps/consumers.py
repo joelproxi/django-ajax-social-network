@@ -40,8 +40,14 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             data_json = await self.get_notif_from_db()
             event["message"] = data_json
             event["name"] = "notif_list"
-
         
+        if text_data_json['type'] == "notif_read":
+            notif_id = text_data_json["message"]
+            await self.mark_notif_as_read(notif_id)
+            data_json = await self.get_notif_from_db(type='notif_feed')
+            event["message"] = data_json
+            event["name"] = "notif_feed"
+
         await self.channel_layer.group_send(self.group_name, event)
         return await super().receive(text_data)
 
@@ -56,4 +62,11 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         serializer = NotificationSerialiser(notif_list, many=True)
         return json.dumps(serializer.data)
         
-        
+    @database_sync_to_async    
+    def mark_notif_as_read(self, notif_id):
+        try:
+            notif = Notification.objects.get(id=notif_id)
+            notif.read = True
+            notif.save()
+        except:
+            pass

@@ -73,6 +73,22 @@ post list
 
   }
 
+  function markNotifAsRead(){
+
+    document.querySelectorAll(".notif-read").forEach(function(item){
+      item.addEventListener("click", function(event){
+        console.log(item.dataset.id)
+        let notif_id = item.dataset.id
+        notifSocket.send(JSON.stringify(
+          {
+            "type": "notif_read",
+            "message": notif_id
+          }
+        ))
+      })
+    })
+  }
+
   function buildDomContent(data) {
 
     const json_data = JSON.parse(data);
@@ -83,14 +99,15 @@ post list
 
       content += `
         <div
-          class="noty_bar noty_type__success noty_theme__unify--v1--light noty_close_with_click noty_close_with_button g-mb-25 mb-1">
+          class="noty_bar notif-read  noty_type__success noty_theme__unify--v1--light noty_close_with_click noty_close_with_button g-mb-25 mb-1"
+          data-id="${ notification.id }">
           <div class="noty_body">
               <div class="g-mr-20">
                   <div class="noty_body__icon">
                       <i class="hs-admin-check"></i>
                   </div>
               </div>
-              <div> ${ notification.user.username }  a ${ notification.action } à ${ notification.created } </div>
+              <div class='${noti  }' > ${ notification.user.username }  a ${ notification.action } à ${ notification.created } </div>
           </div>
           <div class="noty_close_button">×</div>
         </div>
@@ -99,6 +116,7 @@ post list
     }
 
     document.querySelector("#notif-feed").innerHTML = content;
+    markNotifAsRead()
 
   }
 
@@ -221,6 +239,7 @@ post list
   paginateWithAjax()
   likeItemAjax()
   addCommentWithAjax()
+  markNotifAsRead()
 
 </script>
 
@@ -260,7 +279,21 @@ post list
     console.error(e)
 
   }
+  function markNotifAsRead(){
 
+    document.querySelectorAll(".notif-read").forEach(function(item){
+      item.addEventListener("click", function(event){
+        console.log(item.dataset.id)
+        let notif_id = item.dataset.id
+        notifSocket.send(JSON.stringify(
+          {
+            "type": "notif_read",
+            "message": notif_id
+          }
+        ))
+      })
+    })
+  }
 
     function buildDomContent(data) {
 
@@ -272,14 +305,15 @@ post list
 
       content += `
         <div
-          class="noty_bar noty_type__success noty_theme__unify--v1--light noty_close_with_click noty_close_with_button g-mb-25 mb-1">
+          class="noty_bar notif-read noty_type__success noty_theme__unify--v1--light noty_close_with_click noty_close_with_button g-mb-25 mb-1"
+          data-id="${ notification.id }">
           <div class="noty_body">
               <div class="g-mr-20">
                   <div class="noty_body__icon">
                       <i class="hs-admin-check"></i>
                   </div>
               </div>
-              <div> ${ notification.user.username }  a ${ notification.action } a ${ notification.target }  à ${ notification.created } </div>
+              <div class='${ notification.read ? "" : "text-primary" }' > ${ notification.user.username }  a ${ notification.action } a ${ notification.target }  à ${ notification.created } </div>
           </div>
           <div class="noty_close_button">×</div>
         </div>
@@ -288,6 +322,8 @@ post list
     }
 
     document.querySelector("#notif-feed").innerHTML = content;
+    markNotifAsRead()
+
 
   }
 
@@ -417,4 +453,5 @@ post list
   addCommentWithAjax()
   paginateWithAjax()
   likeItemAjax()
+  markNotifAsRead()
 {% endblock dom %}
