@@ -55,6 +55,7 @@ def create_post(request: HttpRequest) -> HttpResponse:
         form_media = mediaFormset(queryset=Media.objects.none())
     context['form_text'] = form_text
     context['form_media'] = form_media
+    context['session'] = 'post'
     return render(request, template_name, context)
 
 
@@ -100,6 +101,7 @@ def update_post(request: HttpRequest, post_id: int) -> HttpResponse:
         form_media = mediaFormset(queryset=media)
     context['form_text'] = form_text
     context['form_media'] = form_media
+    context['session'] = 'post'
     return render(request, template_name, context)
 
 
@@ -126,6 +128,7 @@ def post_list(request: HttpRequest) -> HttpResponse:
         posts = paginator.page(paginator.num_pages)
     context['posts'] = posts
     context['notifications'] = notifications
+    context['session'] = 'home'
 
     if page_only:
         return render(request, template_ajax, context)
