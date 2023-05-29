@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 
@@ -18,6 +19,17 @@ def profile(request: HttpRequest) -> HttpResponse:
     }
     return render(request, template_name, context)
 
+
+@login_required
+def user_list(request: HttpRequest) -> HttpResponse:
+    template_name: str = 'user/list.html'
+    user_list = User.objects.all()
+    context = {
+        'session': 'user',
+        'user_list': user_list,
+    }
+    return render(request, template_name, context)
+    
 
 def register_user(request):
     if request.method == 'POST':

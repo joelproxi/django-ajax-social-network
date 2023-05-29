@@ -16,6 +16,9 @@
             <li class="nav-item {% if session == 'post' %} active {% endif %} ">
                 <a class="nav-link" href=" {% url 'create_post' %}">Post</a> 
             </li>
+            <li class="nav-item {% if session == 'user' %} active {% endif %} ">
+                <a class="nav-link" href=" {% url 'user_list' %}">People</a>
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
