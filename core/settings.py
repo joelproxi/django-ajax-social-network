@@ -151,3 +151,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = '127.0.0.1'
 EMAIL_PORT = '1025'
 DEFAULT_FROM_EMAIL = 'proxidev@gmail.com'
+
+
+from django.urls import reverse_lazy
+
+ABSOLUTE_URL_OVERRIDES = {
+    "auth.user": lambda u: reverse_lazy("user_detail", kwargs={'username': u.username, 'email': u.email}),
+}
