@@ -101,15 +101,21 @@ class Follow(models.Model):
                                 related_name='user_to')
     created_at = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        ordering = ('-created_at',)
+        indexes = [
+            models.Index(fields=['-created_at'])
+        ]
+    
     def __str__(self):
         return "%s started follow %s" % (
             self.user_from.get_username, 
             self.user_to.get_username)
     
 
-User.add_to_class('follow_user',
+User.add_to_class('following',
                   models.ManyToManyField('self', 
-                                         related_name='followed', 
+                                         related_name='followers', 
                                          symmetrical=False))
 
 

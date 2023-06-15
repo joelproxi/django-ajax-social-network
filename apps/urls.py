@@ -12,6 +12,7 @@ urlpatterns = [
  
 	path('ajax/', views.like_item, name='like_item'),
 	path('ajax-add-comment/', views.add_ajax_comment, name='add_ajax_comment'),
+	path('ajax-follow/', views.follow_user, name='follow_user'),
  
 	
 ]

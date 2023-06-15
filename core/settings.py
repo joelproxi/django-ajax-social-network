@@ -156,5 +156,7 @@ DEFAULT_FROM_EMAIL = 'proxidev@gmail.com'
 from django.urls import reverse_lazy
 
 ABSOLUTE_URL_OVERRIDES = {
-    "auth.user": lambda u: reverse_lazy("user_detail", kwargs={'username': u.username, 'email': u.email}),
+    "auth.user": lambda u: reverse_lazy("user_detail", 
+                                        kwargs={'username': u.username, 
+                                                'email': u.email}),
 }

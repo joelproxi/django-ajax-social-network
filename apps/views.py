@@ -7,9 +7,10 @@ from django.forms import modelformset_factory
 from django.http import HttpResponse, HttpRequest, JsonResponse
 from django.shortcuts import  get_object_or_404, render, redirect
 from django.views.decorators.http import require_POST
+from django.contrib.auth.models import User
 
 from apps.forms import CommentForm, PostForm, MediaForm
-from .models import Comment, Media, Notification, Post
+from .models import Comment, Follow, Media, Notification, Post
 
 
 # Create your views here.
@@ -234,4 +235,27 @@ def add_ajax_comment(request):
 def add_notification(user , action, target):
     notif = Notification(user=user, action=action, target=target)
     notif.save()
+    
+    
+@login_required
+@require_POST
+def follow_user(request):
+    user_to_id = request.POST.get('id')
+    action = request.POST.get('action')
+    if user_to_id and action:
+        try:
+            user_to = User.objects.get(user=user_to_id)
+            if action == 'follow':
+                Follow.objects.get_or_create(user_from=request.user,
+                                             user_to=user_to)
+            else:
+                Follow.objects.filter(user_from=request.user,
+                                             user_to=user_to).delete()
+            return JsonResponse({'status': 'success'})
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'error'})
+    return JsonResponse({'status': 'error'})
+      
+            
+                
     
