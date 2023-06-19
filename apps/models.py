@@ -95,10 +95,10 @@ class LikeComment(models.Model):
 class Follow(models.Model):
     user_from = models.ForeignKey(User, 
                                   on_delete=models.CASCADE, 
-                                  related_name='user_set')
+                                  related_name='user_from_set')
     user_to = models.ForeignKey(User, 
                                 on_delete=models.CASCADE, 
-                                related_name='user_to')
+                                related_name='user_to_set')
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
@@ -116,7 +116,8 @@ class Follow(models.Model):
 User.add_to_class('following',
                   models.ManyToManyField('self', 
                                          related_name='followers', 
-                                         symmetrical=False))
+                                         symmetrical=False,
+                                         through=Follow))
 
 
 class Notification(models.Model):
