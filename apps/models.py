@@ -109,8 +109,8 @@ class Follow(models.Model):
     
     def __str__(self):
         return "%s started follow %s" % (
-            self.user_from.get_username, 
-            self.user_to.get_username)
+            self.user_from.get_username(), 
+            self.user_to.get_username())
     
 
 User.add_to_class('following',

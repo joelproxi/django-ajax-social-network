@@ -118,7 +118,11 @@ def post_list(request: HttpRequest) -> HttpResponse:
     page_only = request.GET.get('page_only')
     
     notifications = Notification.objects\
-        .select_related('user', 'content_type').all()
+        .select_related('user', 'content_type').exclude(user_id=request.user.id)
+    following_ids = request.user.following.values_list('id', flat=True)
+    print(following_ids)
+
+    notifications = notifications.filter(user_id__in=following_ids)
     try:
         posts = paginator.page(page)
     except PageNotAnInteger:
