@@ -244,7 +244,7 @@ def follow_user(request):
     action = request.POST.get('action')
     if user_to_id and action:
         try:
-            user_to = User.objects.get(user=user_to_id)
+            user_to = User.objects.get(id=user_to_id)
             if action == 'follow':
                 Follow.objects.get_or_create(user_from=request.user,
                                              user_to=user_to)

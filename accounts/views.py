@@ -23,7 +23,7 @@ def profile(request: HttpRequest) -> HttpResponse:
 @login_required
 def user_list(request: HttpRequest) -> HttpResponse:
     template_name: str = 'user/list.html'
-    user_list = User.objects.filter(is_active=True)
+    user_list = User.objects.filter(is_active=True).exclude(id=request.user.id)
     context = {
         'session': 'user',
         'user_list': user_list,

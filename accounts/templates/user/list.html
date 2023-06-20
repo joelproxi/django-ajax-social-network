@@ -38,22 +38,21 @@
                                     <td style="width: 20%;">
                                         <a href="#" class="table-link text-warning">
                                             <span class="fa-stack">
-                                                <i class="fa fa-square fa-stack-2x"></i>
-                                                <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
+                                               <button 
+                                                    class="btn btn-outline-primary brn-sm btn-follow"
+                                                    data-id="{{ user.id }}"
+                                                    data-action="{% if request.user in user.followers.all %}un{% endif %}follow"
+                                                >
+                                                    {% if request.user not in user.followers.all %}
+                                                        follow
+                                                    {% else %}
+                                                      unfollow
+                                                    {% endif %}
+                                                    
+                                                </button>
                                             </span>
                                         </a>
-                                        <a href="#" class="table-link text-info">
-                                            <span class="fa-stack">
-                                                <i class="fa fa-square fa-stack-2x"></i>
-                                                <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-                                            </span>
-                                        </a>
-                                        <a href="#" class="table-link danger">
-                                            <span class="fa-stack">
-                                                <i class="fa fa-square fa-stack-2x"></i>
-                                                <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-                                            </span>
-                                        </a>
+                                     
                                     </td>
                                 </tr>
                                {% endfor %}
@@ -71,3 +70,69 @@
 {% block style %}
     <link rel="stylesheet" href=" {% static 'assets/css/user_list.css' %} ">
 {% endblock style %}
+
+<script>
+    const cookie = getCookie('csrftoken');
+    const url = "{% url 'follow_user' %}";
+    let options = {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': cookie
+        },
+        origin: 'same-origin'
+    }
+
+    document.querySelectorAll('.btn-follow').forEach(function(item) {
+        item.addEventListener('click', function(event){
+            let followBtn = this;
+            let formData = new FormData()
+            formData.append('id', followBtn.dataset.id)
+            formData.append('action', followBtn.dataset.action)
+            options['body'] = formData
+
+            fetch(url, options)
+                .then(resp => resp.json())
+                .then(data => {
+                    console.log(data)
+                    if(data['status'] === 'success') {
+                        console.log(data['status']);
+                    }
+                })
+        })
+    })
+</script>
+
+{% block dom %}
+  const cookie = getCookie('csrftoken');
+    const url = "{% url 'follow_user' %}";
+    let options = {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': cookie
+        },
+        origin: 'same-origin'
+    }
+
+    document.querySelectorAll('.btn-follow').forEach(function(item) {
+        item.addEventListener('click', function(event){
+            let followBtn = this;
+            let formData = new FormData()
+            formData.append('id', followBtn.dataset.id)
+            formData.append('action', followBtn.dataset.action)
+            options['body'] = formData
+
+            fetch(url, options)
+                .then(resp => resp.json())
+                .then(data => {
+                    console.log(data)
+                    if(data['status'] === 'success') {
+                        console.log(data['status']);
+                        let previousAction = followBtn.dataset.action
+                        let action = previousAction === 'follow' ? 'unfollow' : 'follow';
+                        followBtn.dataset.action = action;
+                        followBtn.innerHTML = action
+                    }
+                })
+        })
+    })
+{% endblock dom %}
