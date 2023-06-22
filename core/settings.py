@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-tbpzuuz8+ta&r-s*z8rkei+j&11i)0em$7xn%#pcqffhq(*8ip
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'danso.com', 'danso.fr', '192.168.8.101']
 
 
 # Application definition
@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    'django_extensions',
 
     'apps.apps.AppsConfig',
     
